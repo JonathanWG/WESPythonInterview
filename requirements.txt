@@ -1,0 +1,9 @@
+fastapi
+pydantic
+django
+django-rest-framework
+logging
+pytest
+requests
+uvicorn
+sqlalchemy
