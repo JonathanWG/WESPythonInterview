@@ -1,19 +1,38 @@
 from django.db import models
 
-# Create your models here.
-class User(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    user_name = models.CharField(max_length=100)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
+from django.db import models
+from Users.models import User
 
-class CreditCard(models.Model):
-    card_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    card_number = models.CharField(max_length=16)
-    expiry_date = models.CharField(max_length=5)
+class Transaction(models.Model):
 
-class UserFeed(models.Model):
-    feed_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    message = models.CharField(max_length=255)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    sender = models.ForeignKey(
+        User, 
+        on_delete=models.PROTECT, 
+        related_name='sent_transactions'
+    )
+    recipient = models.ForeignKey(
+        User, 
+        on_delete=models.PROTECT, 
+        related_name='received_transactions'
+    )
+    
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    description = models.CharField(max_length=255, blank=True)
+    
+    PAYMENT_METHOD_CHOICES = [
+        ('BALANCE', 'Wallet Balance'),
+        ('CREDIT_CARD', 'External Credit Card'),
+    ]
+    payment_method = models.CharField(
+        max_length=20, 
+        choices=PAYMENT_METHOD_CHOICES
+    )
+    
+    external_transaction_id = models.CharField(max_length=100, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"TX {self.id}: {self.sender} -> {self.recipient} (${self.amount})"
