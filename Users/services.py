@@ -1,5 +1,6 @@
 from django.db import transaction
 from .models import User
+from Feed.services import FeedService
 
 class UsersService:
     @staticmethod
@@ -16,6 +17,13 @@ class UsersService:
                     raise ValueError("A User not be a self friend.")
 
                 user.friends.add(friend)
+
+                FeedService.log_activity(
+                    actor=user, 
+                    target=friend, 
+                    event_type='FRND'
+                )
+
                 return user
         except User.DoesNotExist:
             raise ValueError("Some of the users do not exist.")

@@ -1,6 +1,7 @@
 import requests
 from django.db import transaction
 from Users.models import User
+from WESPythonInterview.Feed.services import FeedService
 from .models import Transaction
 from.utils import PAYMENT_MICROSERVICE_URL
 
@@ -50,6 +51,14 @@ class PaymentService:
                     payment_method=data.get('method', 'UNKNOWN').upper(),
                     description=description,
                     external_transaction_id=data.get('transaction_id')
+                )
+
+                FeedService.log_activity(
+                    actor=sender,
+                    target=recipient,
+                    event_type='PAY',
+                    amount=amount,
+                    content=description #(ex: Coffee)
                 )
 
             return {
