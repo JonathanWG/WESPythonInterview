@@ -1,6 +1,7 @@
 import fastapi
 from pydantic import BaseModel
 from typing import Optional
+from decimal import Decimal
 
 
 app = fastapi.FastAPI()
@@ -11,7 +12,7 @@ class CreditCard(BaseModel):
 
 class UserAccount(BaseModel):
     user_id: int
-    balance: float
+    balance: Decimal
     credit_card: Optional[CreditCard] = None
 
 class PaymentRequest(BaseModel):
