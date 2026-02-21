@@ -1,7 +1,7 @@
 import requests
 from django.db import transaction
 from Users.models import User
-from WESPythonInterview.Feed.services import FeedService
+from Feed.services import FeedService
 from .models import Transaction
 from.utils import PAYMENT_MICROSERVICE_URL
 
